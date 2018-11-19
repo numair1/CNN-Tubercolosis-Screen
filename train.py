@@ -22,8 +22,13 @@ def train_net(net,
               gpu=False,
               img_scale=0.5):
 
+<<<<<<< HEAD
     dir_img = 'datasets/MontgomerySet/resized_img/'
     dir_mask = 'datasets/MontgomerySet/resized_mask/'
+=======
+    dir_img = 'data/train/'
+    dir_mask = 'data/train_masks/'
+>>>>>>> 7fe39ad6f456e337f35a57755c02fedaf69332ea
     dir_checkpoint = 'checkpoints/'
 
     ids = get_ids(dir_img)
@@ -105,7 +110,11 @@ def get_args():
     parser = OptionParser()
     parser.add_option('-e', '--epochs', dest='epochs', default=5, type='int',
                       help='number of epochs')
+<<<<<<< HEAD
     parser.add_option('-b', '--batch-size', dest='batchsize', default=1,
+=======
+    parser.add_option('-b', '--batch-size', dest='batchsize', default=10,
+>>>>>>> 7fe39ad6f456e337f35a57755c02fedaf69332ea
                       type='int', help='batch size')
     parser.add_option('-l', '--learning-rate', dest='lr', default=0.1,
                       type='float', help='learning rate')
