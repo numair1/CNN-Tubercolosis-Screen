@@ -1,14 +1,21 @@
 import os
 import shutil
 import random
+
+# Set values for data_path, dataset_name, train_ratio, test_ratio, and valid
+
+# path to folder containing all datasets
 data_path = './data/'
+
+# name of dataset to split
 dataset_name = 'ChinaSet_AllFiles'
-path  = data_path + dataset_name + '/CXR_png/'
-mask  = data_path + dataset_name + '/mask/'
+
 train_ratio = 0.7
 test_ratio = 0.15
 valid = True
 
+path  = data_path + dataset_name + '/CXR_png/'
+mask  = data_path + dataset_name + '/mask/'
 
 if valid:
 	valid_ratio = 1 - train_ratio - test_ratio
@@ -64,9 +71,6 @@ else:
 	test_names_0  = set(final_names_0[int(train_ratio * l_0):])
 	test_names_1  = set(final_names_1[int(train_ratio * l_1):])
 
-print(len(train_names_1))
-print(len(test_names_1))
-print(len(valid_names_1))
 
 for name in final_names_0:
 	if name in train_names_0:
