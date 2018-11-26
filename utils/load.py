@@ -29,7 +29,6 @@ def to_cropped_imgs(ids, dir, suffix, scale):
 def get_imgs_and_masks(ids, dir_img, dir_mask, scale):
     """Return all the couples (img, mask)"""
     imgs = to_cropped_imgs(ids, dir_img, '.png', scale)
-
     # need to transform from HWC to CHW
     imgs_switched = map(hwc_to_chw, imgs)
     imgs_normalized = map(normalize, imgs_switched)

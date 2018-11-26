@@ -22,13 +22,12 @@ def train_net(net,
               gpu=False,
               img_scale=0.5):
 
-    dir_img = 'datasets/MontgomerySet/resized_img/'
-    dir_mask = 'datasets/MontgomerySet/resized_mask/'
+    dir_img = 'datasets/MontgomerySet/CXR_png/'
+    dir_mask = 'datasets/MontgomerySet/Manual_Mask/leftMask'
     dir_checkpoint = 'checkpoints/'
 
     ids = get_ids(dir_img)
     ids = split_ids(ids)
-
     iddataset = split_train_val(ids, val_percent)
 
     print('''
@@ -63,6 +62,10 @@ def train_net(net,
         epoch_loss = 0
 
         for i, b in enumerate(batch(train, batch_size)):
+            print "i"
+            print i
+            print "b"
+            print b
             imgs = np.array([i[0] for i in b]).astype(np.float32)
             true_masks = np.array([i[1] for i in b])
 
