@@ -21,14 +21,19 @@ def train_net(net,
               save_cp=True,
               gpu=False,
               img_scale=0.5):
+    # Training images
+    dir_train_img = 'datasets/segmentation_dataset/train/imgs/'
+    dir_train_mask = 'datasets/segmentation_dataset/train/masks/'
 
-    dir_img = 'datasets/MontgomerySet/CXR_png/'
-    dir_mask = 'datasets/MontgomerySet/Manual_Mask/leftMask'
+    # Validation Images
+    dir_val_img = 'datasets/segmentation_dataset/val/imgs/'
+    dir_val_mask = 'datasets/segmentation_dataset/val/masks/'
+
     dir_checkpoint = 'checkpoints/'
-
-    ids = get_ids(dir_img)
-    ids = split_ids(ids)
-    iddataset = split_train_val(ids, val_percent)
+    # remove split ids since we are not cutting image in half
+    train_ids,val_ids = get_ids(dir_train_img,dir_val_img)
+    # Configure split_train_val to work with prespcified validation set
+    iddataset = split_train_val(train_ids,val_ids)
 
     print('''
     Starting training:
@@ -56,8 +61,8 @@ def train_net(net,
         net.train()
 
         # reset the generators
-        train = get_imgs_and_masks(iddataset['train'], dir_img, dir_mask, img_scale)
-        val = get_imgs_and_masks(iddataset['val'], dir_img, dir_mask, img_scale)
+        train = get_imgs_and_masks(iddataset['train'], dir_train_img, dir_train_mask, img_scale)
+        val = get_imgs_and_masks(iddataset['val'], dir_val_img, dir_val_mask, img_scale)
 
         epoch_loss = 0
 

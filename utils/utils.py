@@ -24,14 +24,14 @@ def resize_and_crop(pilimg, scale=0.5, final_height=None):
     h = pilimg.size[1]
     newW = int(w * scale)
     newH = int(h * scale)
-
+    # Work on rounding up image to nearest multiple of 32
+    newW = newW - newW%32
+    newH = newH - newH%32
     if not final_height:
         diff = 0
     else:
         diff = newH - final_height
-
     img = pilimg.resize((newW, newH))
-    img = img.crop((0, diff // 2, newW, newH - diff // 2))
     return np.array(img, dtype=np.float32)
 
 def batch(iterable, batch_size):
@@ -46,12 +46,14 @@ def batch(iterable, batch_size):
     if len(b) > 0:
         yield b
 
-def split_train_val(dataset, val_percent=0.05):
-    dataset = list(dataset)
-    length = len(dataset)
-    n = int(length * val_percent)
-    random.shuffle(dataset)
-    return {'train': dataset[:-n], 'val': dataset[-n:]}
+def split_train_val(train_dataset,val_dataset):
+    train_dataset = list(train_dataset)
+    random.shuffle(train_dataset)
+
+    val_dataset = list(val_dataset)
+    random.shuffle(val_dataset)
+
+    return {'train': train_dataset, 'val': val_dataset}
 
 
 def normalize(x):

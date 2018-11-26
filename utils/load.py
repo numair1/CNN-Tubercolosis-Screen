@@ -10,9 +10,9 @@ from PIL import Image
 from .utils import resize_and_crop, get_square, normalize, hwc_to_chw
 
 
-def get_ids(dir):
+def get_ids(train_dir,val_dir):
     """Returns a list of the ids in the directory"""
-    return (f[:-4] for f in os.listdir(dir))
+    return (f[:-4] for f in os.listdir(train_dir)),(f[:-4] for f in os.listdir(val_dir))
 
 
 def split_ids(ids, n=1):
@@ -22,9 +22,9 @@ def split_ids(ids, n=1):
 
 def to_cropped_imgs(ids, dir, suffix, scale):
     """From a list of tuples, returns the correct cropped img"""
-    for id, pos in ids:
+    for id in ids:
         im = resize_and_crop(Image.open(dir + id + suffix), scale=scale)
-        yield get_square(im, pos)
+        yield im
 
 def get_imgs_and_masks(ids, dir_img, dir_mask, scale):
     """Return all the couples (img, mask)"""
