@@ -62,10 +62,6 @@ def train_net(net,
         epoch_loss = 0
 
         for i, b in enumerate(batch(train, batch_size)):
-            print "i"
-            print i
-            print "b"
-            print b
             imgs = np.array([i[0] for i in b]).astype(np.float32)
             true_masks = np.array([i[1] for i in b])
 
