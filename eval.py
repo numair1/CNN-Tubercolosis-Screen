@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-
+import numpy as np
 from dice_loss import dice_coeff
 
 
@@ -10,7 +10,7 @@ def eval_net(net, dataset, gpu=False):
     tot = 0
     for i, b in enumerate(dataset):
         img = b[0]
-        true_mask = b[1]
+        true_mask = np.divide(b[1],255)
 
         img = torch.from_numpy(img).unsqueeze(0)
         true_mask = torch.from_numpy(true_mask).unsqueeze(0)

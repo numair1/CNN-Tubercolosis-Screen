@@ -2,3 +2,5 @@
 /MODEL.pth
 /INTERRUPTED.pth
 /prepared_datasets
+/bce_checkpoints
+/checkpoints

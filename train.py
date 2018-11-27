@@ -29,7 +29,7 @@ def train_net(net,
     dir_val_img = 'datasets/segmentation_dataset/val/imgs/'
     dir_val_mask = 'datasets/segmentation_dataset/val/masks/'
 
-    dir_checkpoint = 'checkpoints/'
+    dir_checkpoint = 'bce_checkpoints/'
     # remove split ids since we are not cutting image in half
     train_ids,val_ids = get_ids(dir_train_img,dir_val_img)
     # Configure split_train_val to work with prespcified validation set
@@ -55,7 +55,7 @@ def train_net(net,
                           weight_decay=0.0005)
 
     criterion = nn.BCELoss()
-
+    best_val_dice = -1
     for epoch in range(epochs):
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
         net.train()
@@ -66,13 +66,12 @@ def train_net(net,
 
         epoch_loss = 0
 
-        for i, b in enumerate(batch(train, batch_size)):
+        for j, b in enumerate(batch(train, batch_size)):
             imgs = np.array([i[0] for i in b]).astype(np.float32)
-            true_masks = np.array([i[1] for i in b])
+            true_masks = np.array([np.divide(i[1],255) for i in b])
 
             imgs = torch.from_numpy(imgs)
             true_masks = torch.from_numpy(true_masks)
-
             if gpu:
                 imgs = imgs.cuda()
                 true_masks = true_masks.cuda()
@@ -85,23 +84,25 @@ def train_net(net,
 
             loss = criterion(masks_probs_flat, true_masks_flat)
             epoch_loss += loss.item()
-
-            print('{0:.4f} --- loss: {1:.6f}'.format(i * batch_size / N_train, loss.item()))
+	    
+            #print('{0:.4f} --- loss: {1:.6f}'.format(j * batch_size / N_train, loss.item()))
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-        print('Epoch finished ! Loss: {}'.format(epoch_loss / i))
+        print('Epoch finished ! Loss: {}'.format(epoch_loss))
 
         if 1:
             val_dice = eval_net(net, val, gpu)
             print('Validation Dice Coeff: {}'.format(val_dice))
 
-        if save_cp:
-            torch.save(net.state_dict(),
-                       dir_checkpoint + 'CP{}.pth'.format(epoch + 1))
-            print('Checkpoint {} saved !'.format(epoch + 1))
+        if True:
+	    if val_dice>best_val_dice:
+		best_val_dice = val_dice
+            	torch.save(net.state_dict(),
+                       	dir_checkpoint + 'CP_best.pth')
+            	print('Checkpoint {} saved !'.format(epoch + 1))
 
 
 
