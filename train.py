@@ -12,6 +12,7 @@ from torch import optim
 from eval import eval_net
 from unet import UNet
 from utils import get_ids, split_ids, split_train_val, get_imgs_and_masks, batch
+from dice_loss import DiceCoeff
 
 def train_net(net,
               epochs=5,
@@ -54,7 +55,8 @@ def train_net(net,
                           momentum=0.9,
                           weight_decay=0.0005)
 
-    criterion = nn.BCELoss()
+    #criterion = nn.BCELoss()
+    criterion = DiceCoeff()
     best_val_dice = -1
     for epoch in range(epochs):
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
@@ -84,11 +86,11 @@ def train_net(net,
 
             loss = criterion(masks_probs_flat, true_masks_flat)
             epoch_loss += loss.item()
-	    
+
             #print('{0:.4f} --- loss: {1:.6f}'.format(j * batch_size / N_train, loss.item()))
 
             optimizer.zero_grad()
-            loss.backward()
+            loss.backward(retain_graph = True)
             optimizer.step()
 
         print('Epoch finished ! Loss: {}'.format(epoch_loss))
