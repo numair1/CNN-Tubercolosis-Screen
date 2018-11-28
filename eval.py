@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 import numpy as np
-from dice_loss import dice_coeff
 
 
 def eval_net(net, dataset, gpu=False):
@@ -21,6 +20,8 @@ def eval_net(net, dataset, gpu=False):
 
         mask_pred = net(img)[0]
         mask_pred = (F.sigmoid(mask_pred) > 0.5).float()
-
-        tot += dice_coeff(mask_pred, true_mask).item()
+        eps = 0.0001
+        inter = torch.dot(mask_pred.view(-1), true_mask.view(-1))
+        union = torch.sum(mask_pred*mask_pred) + torch.sum(true_mask*true_mask) + eps
+        tot += (2 *inter.float() + eps) / union.float() 
     return tot / i
