@@ -5,6 +5,10 @@ class DiceCoeff(Function):
     """Dice coeff for individual examples"""
 
     def forward(self, input, target):
+        print "input"
+        print np.unique(input)
+        print "target"
+        print np.unique(target)
         self.save_for_backward(input, target)
         eps = 0.0001
         self.inter = torch.dot(input.view(-1), target.view(-1))

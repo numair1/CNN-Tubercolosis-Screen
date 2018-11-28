@@ -55,8 +55,8 @@ def train_net(net,
                           momentum=0.9,
                           weight_decay=0.0005)
 
-    criterion = nn.BCELoss()
-    #criterion = DiceCoeff()
+    #criterion = nn.BCELoss()
+    criterion = DiceCoeff()
     best_val_dice = -1
     for epoch in range(epochs):
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
@@ -90,7 +90,7 @@ def train_net(net,
             #print('{0:.4f} --- loss: {1:.6f}'.format(j * batch_size / N_train, loss.item()))
 
             optimizer.zero_grad()
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
 
         print('Epoch finished ! Loss: {}'.format(epoch_loss))
