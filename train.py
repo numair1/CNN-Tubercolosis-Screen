@@ -55,8 +55,8 @@ def train_net(net,
                           momentum=0.9,
                           weight_decay=0.0005)
 
-    #criterion = nn.BCELoss()
-    criterion = DiceCoeff()
+    criterion = nn.BCELoss()
+    #criterion = DiceCoeff()
     best_val_dice = -1
     for epoch in range(epochs):
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
@@ -90,13 +90,15 @@ def train_net(net,
             #print('{0:.4f} --- loss: {1:.6f}'.format(j * batch_size / N_train, loss.item()))
 
             optimizer.zero_grad()
-            loss.backward(retain_graph = True)
+            loss.backward()
             optimizer.step()
 
         print('Epoch finished ! Loss: {}'.format(epoch_loss))
 
         if 1:
             val_dice = eval_net(net, val, gpu)
+	    #train_dice = eval_net(net, train, gpu)
+	    #print('Train Dice Coeff: {}'.format(train_dice))
             print('Validation Dice Coeff: {}'.format(val_dice))
 
         if True:
@@ -132,7 +134,7 @@ if __name__ == '__main__':
     net = UNet(n_channels=3, n_classes=1)
 
     if args.load:
-        net.load_state_dict(torch.load(args.load))
+        net.load_state_dict(torch.load(args.load),strict = False)
         print('Model loaded from {}'.format(args.load))
 
     if args.gpu:
