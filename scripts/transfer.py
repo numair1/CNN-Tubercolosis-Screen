@@ -45,7 +45,7 @@ from torchvision import datasets, models, transforms
 import time
 import os
 import copy
-
+from sklearn.metrics import confusion_matrix
 #plt.ion()   # interactiv`e mode
 
 ######################################################################
@@ -86,7 +86,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = '../data/split_ChinaSet_AllFiles'
+data_dir = '../data/only'
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'valid']}
@@ -118,6 +118,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
             running_loss = 0.0
             running_corrects = 0
+            tp = 0
+            tn = 0
+            fp = 0
+            fn = 0
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
@@ -142,17 +146,39 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
+                p = preds.cpu().numpy()
+                l = labels.data.cpu().numpy()
+                for i in range(p.shape[0]):
+                    pr = p[i]
+                    lab = l[i]
+                    if pr == lab:
+                        if lab == 1:
+                            tp += 1
+                        else:
+                            tn += 1
+                    else:
+                        if lab == 1:
+                            fn += 1
+                        else:
+                            fp += 1
+                #print(tp)
+                #print(labels.data)
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            print('{} Loss: {:.4f} Acc: {:.4f}'.format(
-                phase, epoch_loss, epoch_acc))
+            sensitivity = tp / (tp + fn)
+            specifity = tn / (tn + fp)
+            precision = tp / (tp + fp)
+            print('{} Loss: {:.4f} Acc: {:.4f} Sensitivty: {:.4f} Specificity: {:.4f} Precision: {:.4f}'.format(
+                phase, epoch_loss, epoch_acc, sensitivity, specifity, precision))
 
             # deep copy the model
             if phase == 'valid' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                
+                
 
         print()
 
@@ -173,7 +199,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 # Load a pretrained model and reset final fully connected layer.
 #
 
-model_ft = models.resnet18(pretrained=True)
+model_ft = models.resnet50(pretrained=True)
 num_ftrs = model_ft.fc.in_features
 model_ft.fc = nn.Linear(num_ftrs, 2)
 
@@ -219,7 +245,7 @@ model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
 
 
 
-model_conv = torchvision.models.resnet18(pretrained=True)
+model_conv = torchvision.models.resnet50(pretrained=True)
 for param in model_conv.parameters():
     param.requires_grad = False
 
