@@ -30,7 +30,7 @@ def train_net(net,
     dir_val_img = 'datasets/segmentation_dataset/val/imgs/'
     dir_val_mask = 'datasets/segmentation_dataset/val/masks/'
 
-    dir_checkpoint = 'bce_checkpoints/'
+    dir_checkpoint = 'dice_25_bilinear_checkpoints/'
     # remove split ids since we are not cutting image in half
     train_ids,val_ids = get_ids(dir_train_img,dir_val_img)
     # Configure split_train_val to work with prespcified validation set
@@ -90,7 +90,7 @@ def train_net(net,
             #print('{0:.4f} --- loss: {1:.6f}'.format(j * batch_size / N_train, loss.item()))
 
             optimizer.zero_grad()
-            loss.backward(retain_graph=True)
+            loss.backward(retain_graph = True)
             optimizer.step()
 
         print('Epoch finished ! Loss: {}'.format(epoch_loss))
