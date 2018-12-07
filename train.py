@@ -49,19 +49,19 @@ def train_net(net,
                len(iddataset['val']), str(save_cp), str(gpu)))
 
     N_train = len(iddataset['train'])
-
     optimizer = optim.SGD(net.parameters(),
                           lr=lr,
                           momentum=0.9,
                           weight_decay=0.0005)
-
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
     #criterion = nn.BCELoss()
     criterion = DiceCoeff()
     best_val_dice = -1
     for epoch in range(epochs):
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
-        net.train()
-
+        scheduler.step()
+	net.train()
+	
         # reset the generators
         train = get_imgs_and_masks(iddataset['train'], dir_train_img, dir_train_mask, img_scale)
         val = get_imgs_and_masks(iddataset['val'], dir_val_img, dir_val_mask, img_scale)
