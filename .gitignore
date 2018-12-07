@@ -5,4 +5,10 @@
 /bce_checkpoints
 /checkpoints
 /dice_25_bilinear_checkpoints
+<<<<<<< HEAD
 /DLProject
+=======
+/dice_25_checkpoints
+/dice_checkpoints
+/bce_25_checkpoints
+>>>>>>> 7d061faa731f277535ba688303e84ef2fef85196
